@@ -8,7 +8,8 @@ import { getFirestore } from "firebase/firestore"
 import { Watch } from 'react-loader-spinner';
 import { initializeApp } from "firebase/app";
 import { getAuth, signInWithPopup, GoogleAuthProvider, signOut } from "firebase/auth";
-
+import ExpandMoreSharpIcon from '@mui/icons-material/ExpandMoreSharp';
+import ExpandLessSharpIcon from '@mui/icons-material/ExpandLessSharp';
 function Home() {
     var [cryptos, setCryptos] = useState({})
     var [status, setStatus] = useState("offline")
@@ -55,14 +56,27 @@ function Home() {
 
         }
 
+        
+    }
+    async function startdata(){
         const response = await fetch("http://localhost:3010/api/home/", { mode: 'cors' });
         const jsonData = await response.json();
         console.log(jsonData)
         setInitial24(Object.entries(jsonData).map((doc) => ({ ...doc })))
         setInitialcp24(Object.entries(jsonData).map((doc) => ({ ...doc })))
+        
     }
     useEffect(() => {
         starttrack()
+        
+        const intervalId = setInterval(() => {
+            // Your API call logic here
+            startdata()
+          }, 15000);
+      
+          return () => {
+            clearInterval(intervalId);
+          };
     }, [])
     const navigate = useNavigate();
 
@@ -88,7 +102,7 @@ function Home() {
             setInitial24(initialcp24)
         }
         else {
-            setInitial24(initialcp24.filter((item) => { if (item[1].symbol.toLowerCase().includes(event.target.value.toLowerCase())) { return item; } }))
+            setInitial24(initialcp24.filter((item) => { if (item[1].symbol.toLowerCase().includes(event.target.value.toLowerCase()) || item[1].baseAsset.toLowerCase().includes(event.target.value.toLowerCase())) { return item; } }))
         }
         setShowloader(false)
     }
@@ -141,7 +155,7 @@ function Home() {
 
 
                 <div className="d-flex flex-row">
-                    <input type="text" onChange={searchcrypto} className="container px-4 m-2 py-3 rounded-pill " placeholder="Enter the crypto name and hit enter" />
+                    <input style={{border:"none",boxShadow:"2px 2px 2px 2px rgba(0, 0, 0, 0.2)"}} type="text" onChange={searchcrypto} className="container px-4 m-2 py-3 rounded-pill " placeholder="Enter the crypto name" />
                     <Watch
                         height="40"
                         width="50"
@@ -160,8 +174,8 @@ function Home() {
                         return (<div></div>)
                     }
                     return (
-                        <div onClick={() => { navigate(`/${ele[1].symbol}`) }} key={ele[0]} className="container border rounded m-2 p-2">
-                            <div> <h3> {ele[1].symbol} <span className="float-end text-end"> <h4>{ele[1].baseAsset}</h4></span></h3>
+                        <div style={{cursor:"pointer"}} onClick={() => { navigate(`/${ele[1].symbol}`) }} key={ele[0]} className="container border rounded m-2 p-3">
+                            <div> <h3> <b>{ele[1].symbol}</b>  <span className="float-end text-end"> <h5 className="px-2  py-1 rounded" style={{border:"2px solid rgb(184, 222, 255)"}}> {ele[1].baseAsset}</h5></span></h3>
                                 <div className="row">
                                     <div className="col">
                                         <div>Open price {ele[1].openPrice}</div>
@@ -169,7 +183,8 @@ function Home() {
                                     </div>
                                     <div className="col">
                                         <div>
-                                            {(Math.round(((ele[1].openPrice-ele[1].lastPrice)*100/ele[1].openPrice)*100)/100)<0 ? <div className="text-danger"><b>{ Math.round(((ele[1].openPrice-ele[1].lastPrice)*100/ele[1].openPrice)*100)/100}%</b> </div> : <div className="text-success"><b> {Math.round(((ele[1].openPrice-ele[1].lastPrice)*100/ele[1].openPrice)*100)/100}%</b> </div>}
+                                        
+                                            {(Math.round(((ele[1].openPrice-ele[1].lastPrice)*100/ele[1].openPrice)*100)/100)<0 ?  <div className=" p-2 rounded text-danger "  style={{backgroundColor:"rgb(255, 230, 230)",width:"fit-content"}}><b> <ExpandMoreSharpIcon sx={{ color: "red" }}/>{Math.round(((ele[1].openPrice-ele[1].lastPrice)*100/ele[1].openPrice)*1000)/1000}%</b> </div> : <div className="p-2 rounded text-success" style={{backgroundColor:"rgb(230, 255, 230)", width:"fit-content"}}><b> <ExpandLessSharpIcon sx={{ color: "greens" }}/>{Math.round(((ele[1].openPrice-ele[1].lastPrice)*100/ele[1].openPrice)*1000)/1000}%</b> </div>}
                                         </div>
                                     </div>
                                     <div className="col">
