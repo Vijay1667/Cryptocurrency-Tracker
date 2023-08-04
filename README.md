@@ -13,6 +13,19 @@ Cryptocurrency Price API: WazirX API.
 ## Additional:
 Apache echarts for Reactjs for graph visualisation
 
+## Start Frontend
+
+```
+cd frontend
+npm start
+```
+
+## Start Backend
+
+```
+cd server
+npm run devstart
+```
 
 
 # IMPLEMENTATION
