@@ -15,14 +15,18 @@ function EachCrypto(props) {
     var [currentdatac, setCurrentdatac] = useState([])
     var [currentdata, setCurrentdata] = useState([])
     var [value, setValue] = React.useState('one');
+    var [interval1, setInterval1] = useState("1h");
     var [released, setReleased] = useState(false);
     async function handleChange(event, newValue) {
         setValue(newValue);
-        setCurrentdatac([]);
+        // setCurrentdatac([]);
+        console.log("EMOTY array"+currentdatac)
         // setCurrentdata([]);
         setReleased(true);
         console.log(newValue)
-        if (newValue === "one") {
+        if (newValue == "one") {
+            setInterval1("1h")
+            
             const response = await fetch(`http://localhost:3010/api/eachcrypto/${params.name}/`, {
                 method: "POST", headers: {
                     'Accept': 'application/json',
@@ -31,12 +35,18 @@ function EachCrypto(props) {
             });
             const jsonData = await response.json();
             console.log(jsonData)
+            const newData = [];
+            Object.entries(jsonData).map((doc) => {
+                newData.push({ x: doc[1][0] * 1000, y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] });
+            });
+        
+            setCurrentdata(newData);
 
-            Object.entries(jsonData).map((doc) => ((currentdatac.push({ x: (doc[1][0] * 1000), y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] }))))
-            setCurrentdata(currentdatac)
+            // Object.entries(jsonData).map((doc) => ((currentdatac.push({ x: (doc[1][0] * 1000), y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] }))))
+            // setCurrentdata(currentdatac)
         }
-        else if (newValue === "two") {
-            
+        else if (newValue == "two") {
+            setInterval1("1d")
             const response = await fetch(`http://localhost:3010/api/eachcrypto/${params.name}/`, {
                 method: "POST", headers: {
                     'Accept': 'application/json',
@@ -45,11 +55,17 @@ function EachCrypto(props) {
             });
             const jsonData = await response.json();
             console.log(jsonData)
-
-            Object.entries(jsonData).map((doc) => ((currentdatac.push({ x: (doc[1][0] * 1000), y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] }))))
-            setCurrentdata(currentdatac)
+            const newData = [];
+            Object.entries(jsonData).map((doc) => {
+                newData.push({ x: doc[1][0] * 1000, y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] });
+            });
+        
+            setCurrentdata(newData);
+            // Object.entries(jsonData).map((doc) => ((currentdatac.push({ x: (doc[1][0] * 1000), y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] }))))
+            // setCurrentdata(currentdatac)
         }
         else {
+            setInterval1("1w")
             const response = await fetch(`http://localhost:3010/api/eachcrypto/${params.name}/`, {
                 method: "POST", headers: {
                     'Accept': 'application/json',
@@ -58,11 +74,16 @@ function EachCrypto(props) {
             });
             const jsonData = await response.json();
             console.log(jsonData)
-
-            Object.entries(jsonData).map((doc) => ((currentdatac.push({ x: (doc[1][0] * 1000), y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] }))))
-            setCurrentdata(currentdatac)
+            const newData = [];
+            Object.entries(jsonData).map((doc) => {
+                newData.push({ x: doc[1][0] * 1000, y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] });
+            });
+        
+            setCurrentdata(newData);
+            // Object.entries(jsonData).map((doc) => ((currentdatac.push({ x: (doc[1][0] * 1000), y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] }))))
+            // setCurrentdata(currentdatac)
         }
-        setTimeout(() => {setReleased(false)},2000)
+        setCurrentdatac([]);
     };
     async function fetchPrices() {
         //     const req24 = await fetch(`https://api.wazirx.com/sapi/v1/klines?`+new URLSearchParams({
@@ -72,21 +93,40 @@ function EachCrypto(props) {
         // }))
         //         const resp24 = await req24.json()
         //         console.log(resp24)
+        // setCurrentdatac([]);
+        
+        console.log("EMPTY aray"+currentdatac)
+
+        // setCurrentdata([]);
         const response = await fetch(`http://localhost:3010/api/eachcrypto/${params.name}/`, {
             method: "POST", headers: {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json'
-            }, mode: 'cors', body: JSON.stringify({ interval: "1h", limit: 30 })
+            }, mode: 'cors', body: JSON.stringify({ interval: interval1, limit: 30 })
         });
         const jsonData = await response.json();
         console.log(jsonData)
-
-        Object.entries(jsonData).map((doc) => ((currentdatac.push({ x: (doc[1][0] * 1000), y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] }))))
-        setCurrentdata(currentdatac)
+        const newData = [];
+        Object.entries(jsonData).map((doc) => {
+            newData.push({ x: doc[1][0] * 1000, y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] });
+        });
+    
+        setCurrentdata(newData);
+        // Object.entries(jsonData).map((doc) => ((currentdatac.push({ x: (doc[1][0] * 1000), y: [doc[1][1], doc[1][2], doc[1][3], doc[1][4]] }))))
+        // setCurrentdata(currentdatac)
+        // setCurrentdatac([]);
     }
     useEffect(() => {
-        fetchPrices()
-    }, [])
+        
+        const intervalId = setInterval(() => {
+            // Your API call logic here
+            fetchPrices()
+          }, 15000);
+      
+          return () => {
+            clearInterval(intervalId);
+          };
+    }, [interval1])
 
     
     return (
