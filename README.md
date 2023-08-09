@@ -35,6 +35,10 @@ npm run devstart
 
 I have used express js as backend, I have made sure that API is not leaked on the frontend side. All requests are made to backend and from the backend to wazirx API
 
+The API call is sent to backend express.js and from that it sent to wazirxAPI. The API call is sent for every 15 sec so that data on frontend is updated every 15sec.
+
+The data on the graphs is also updated and visualised for every 15sec using setInterval() method
+
 fronend <--> backend <--> wazirxAPI 
 
 
